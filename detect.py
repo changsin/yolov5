@@ -27,6 +27,7 @@ Usage - formats:
 import argparse
 import os
 import sys
+import yaml
 from pathlib import Path
 
 import torch
@@ -92,6 +93,12 @@ def run(
     model = DetectMultiBackend(weights, device=device, dnn=dnn, data=data, fp16=half)
     stride, names, pt = model.stride, model.names, model.pt
     imgsz = check_img_size(imgsz, s=stride)  # check image size
+
+    filename_coco128_vi = 'data/coco128-vi.yaml'
+    # names = yaml.safe_load(Path(filename_coco128_vi))
+    with open(filename_coco128_vi, errors='ignore', encoding="utf-8") as f:
+        names = yaml.safe_load(f)['names']  # class names
+        print(names)
 
     # Dataloader
     if webcam:
