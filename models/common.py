@@ -327,14 +327,14 @@ class DetectMultiBackend(nn.Module):
         w = attempt_download(w)  # download if not local
         fp16 &= (pt or jit or onnx or engine) and device.type != 'cpu'  # FP16
         if data:  # data.yaml path (optional)
-            # Added encoding="utf-8" parameter to process Unicode characters
+            # Added encoding="utf-8" parameter to support Unicode characters
             with open(data, errors='ignore', encoding="utf-8") as f:
                 names = yaml.safe_load(f)['names']  # class names
 
         if pt:  # PyTorch
             model = attempt_load(weights if isinstance(weights, list) else w, map_location=device)
             stride = max(int(model.stride.max()), 32)  # model stride
-            # HACK: if data is specified, do not override names
+            # if data is specified, it should not be overridden
             if data is None:
                 names = model.module.names if hasattr(model, 'module') else model.names  # get class names
             model.half() if fp16 else model.float()
